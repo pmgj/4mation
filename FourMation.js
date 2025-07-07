@@ -1,0 +1,99 @@
+import Player from "./Player.js";
+import CellState from "./CellState.js";
+import Cell from "./Cell.js";
+import Winner from "./Winner.js";
+
+export default class FourMation {
+    constructor(nrows = 7, ncols = 7) {
+        this.ROWS = nrows;
+        this.COLS = ncols;
+        this.turn = Player.PLAYER1;
+        this.board = new Array(nrows).fill(0).map(x => new Array(ncols).fill(CellState.EMPTY));
+        this.lastCell = null;
+    }
+    getTurn() {
+        return this.turn;
+    }
+    getRows() {
+        return this.ROWS;
+    }
+    getCols() {
+        return this.COLS;
+    }
+    onBoard({x, y}) {
+        return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;
+    }
+    play(cell) {
+        let { x, y } = cell;
+        if (!this.onBoard(cell)) {
+            throw new Error("Limites incorretos.");
+        }
+        if (this.board[x][y] !== CellState.EMPTY) {
+            throw new Error("Célula não vazia.");
+        }
+        if (this.lastCell) {
+            let { x: x1, y: y1 } = this.lastCell;
+            let cells = [new Cell(x1 - 1, y1 - 1), new Cell(x1 - 1, y1), new Cell(x1 - 1, y1 + 1), new Cell(x1, y1 - 1), new Cell(x1, y1 + 1), new Cell(x1 + 1, y1 - 1), new Cell(x1 + 1, y1), new Cell(x1 + 1, y1 + 1)];
+            if (cells.some(c => this.onBoard(c) && this.board[c.x][c.y] === CellState.EMPTY)) {
+                if (!cells.some(c => c.equals(cell))) {
+                    throw new Error("Não ortogonal.");
+                }
+            }
+        }
+        this.board[x][y] = this.turn === Player.PLAYER1 ? CellState.PLAYER1 : CellState.PLAYER2;
+        this.lastCell = cell;
+        this.turn = this.turn === Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1;
+        return this.endOfGame();
+    }
+    endOfGame() {
+        let checkH = player => {
+            for (let i = 0; i < this.ROWS; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (this.board[i][j] === player && this.board[i][j + 1] === player && this.board[i][j + 2] === player && this.board[i][j + 3] === player) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        let checkV = player => {
+            for (let i = 0; i < this.COLS; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (this.board[j][i] === player && this.board[j + 1][i] === player && this.board[j + 2][i] === player && this.board[j + 3][i] === player) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        if (checkH(CellState.PLAYER1)) {
+            return Winner.PLAYER1;
+        } else if (checkH(CellState.PLAYER2)) {
+            return Winner.PLAYER2;
+        } else if (checkV(CellState.PLAYER1)) {
+            return Winner.PLAYER1;
+        } else if (checkV(CellState.PLAYER2)) {
+            return Winner.PLAYER2;
+        }
+        return Winner.NONE;
+    }
+}
+// let fm = new FourMation();
+function test1() {
+    console.log(fm.play(new Cell(2, 3)));
+    console.log(fm.play(new Cell(1, 3)));
+    console.log(fm.play(new Cell(2, 4)));
+    console.log(fm.play(new Cell(1, 4)));
+    console.log(fm.play(new Cell(2, 5)));
+    console.log(fm.play(new Cell(1, 5)));
+    console.log(fm.play(new Cell(2, 6)));
+}
+function test2() {
+    console.log(fm.play(new Cell(2, 3)));
+    console.log(fm.play(new Cell(2, 2)));
+    console.log(fm.play(new Cell(3, 3)));
+    console.log(fm.play(new Cell(3, 2)));
+    console.log(fm.play(new Cell(4, 3)));
+    console.log(fm.play(new Cell(4, 2)));
+    console.log(fm.play(new Cell(5, 3)));
+}

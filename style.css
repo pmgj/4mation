@@ -1,0 +1,31 @@
+caption {
+    text-align: center;
+    font-weight: bold;
+    font-size: xx-large;
+    caption-side: top;
+    color: black;
+}
+
+table {
+    border-collapse: separate;
+    margin: 0 auto;
+}
+
+td {
+    border: 3px solid black;
+    text-align: center;
+    --cell-size: 6vmin;
+    width: clamp(30px, var(--cell-size), 50px);
+    height: clamp(30px, var(--cell-size), 50px);
+}
+
+p {
+    text-align: center;
+}
+
+.PLAYER1 {
+    background-color: blue;
+}
+.PLAYER2 {
+    background-color: red;
+}
