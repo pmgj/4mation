@@ -23,9 +23,14 @@ p {
     text-align: center;
 }
 
+input[type="number"] {
+    width: 80px;
+}
+
 .PLAYER1 {
     background-color: blue;
 }
+
 .PLAYER2 {
     background-color: red;
 }

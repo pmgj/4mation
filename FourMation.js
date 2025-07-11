@@ -4,7 +4,7 @@ import Cell from "./Cell.js";
 import Winner from "./Winner.js";
 
 export default class FourMation {
-    constructor(nrows = 7, ncols = 7) {
+    constructor(nrows = 4, ncols = 4) {
         this.ROWS = nrows;
         this.COLS = ncols;
         this.turn = Player.PLAYER1;
@@ -26,17 +26,17 @@ export default class FourMation {
     play(cell) {
         let { x, y } = cell;
         if (!this.onBoard(cell)) {
-            throw new Error("Limites incorretos.");
+            throw new Error("Cell does not exist.");
         }
         if (this.board[x][y] !== CellState.EMPTY) {
-            throw new Error("Célula não vazia.");
+            throw new Error("Cell is not empty.");
         }
         if (this.lastCell) {
             let { x: x1, y: y1 } = this.lastCell;
             let cells = [new Cell(x1 - 1, y1 - 1), new Cell(x1 - 1, y1), new Cell(x1 - 1, y1 + 1), new Cell(x1, y1 - 1), new Cell(x1, y1 + 1), new Cell(x1 + 1, y1 - 1), new Cell(x1 + 1, y1), new Cell(x1 + 1, y1 + 1)];
             if (cells.some(c => this.onBoard(c) && this.board[c.x][c.y] === CellState.EMPTY)) {
                 if (!cells.some(c => c.equals(cell))) {
-                    throw new Error("Não ortogonal.");
+                    throw new Error("Not orthogonal.");
                 }
             }
         }
@@ -48,7 +48,7 @@ export default class FourMation {
     endOfGame() {
         let checkH = player => {
             for (let i = 0; i < this.ROWS; i++) {
-                for (let j = 0; j < 4; j++) {
+                for (let j = 0; j <= this.COLS - 4; j++) {
                     if (this.board[i][j] === player && this.board[i][j + 1] === player && this.board[i][j + 2] === player && this.board[i][j + 3] === player) {
                         return true;
                     }
@@ -58,7 +58,7 @@ export default class FourMation {
         };
         let checkV = player => {
             for (let i = 0; i < this.COLS; i++) {
-                for (let j = 0; j < 4; j++) {
+                for (let j = 0; j <= this.ROWS - 4; j++) {
                     if (this.board[j][i] === player && this.board[j + 1][i] === player && this.board[j + 2][i] === player && this.board[j + 3][i] === player) {
                         return true;
                     }
@@ -66,14 +66,12 @@ export default class FourMation {
             }
             return false;
         };
-        if (checkH(CellState.PLAYER1)) {
+        if (checkH(CellState.PLAYER1) || checkV(CellState.PLAYER1)) {
             return Winner.PLAYER1;
-        } else if (checkH(CellState.PLAYER2)) {
+        } else if (checkH(CellState.PLAYER2) || checkV(CellState.PLAYER2)) {
             return Winner.PLAYER2;
-        } else if (checkV(CellState.PLAYER1)) {
-            return Winner.PLAYER1;
-        } else if (checkV(CellState.PLAYER2)) {
-            return Winner.PLAYER2;
+        } else if(this.board.flat().filter(c => c === CellState.EMPTY).length === 0) {
+            return Winner.DRAW;
         }
         return Winner.NONE;
     }

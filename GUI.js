@@ -1,10 +1,9 @@
 import FourMation from "./FourMation.js";
 import Cell from "./Cell.js";
-import Winner from "./Winner.js";
 
 class GUI {
     constructor() {
-        this.game = new FourMation();
+        this.game = null;
     }
     coordinates(td) {
         return new Cell(td.parentNode.rowIndex, td.cellIndex);
@@ -16,15 +15,27 @@ class GUI {
         try {
             let w = this.game.play(cell);
             ev.target.className = turn;
-            if (w !== Winner.NONE) {
-                message.textContent = w === Winner.PLAYER1 ? "As azuis ganharam!" : w === Winner.PLAYER2 ? "As vermelhas ganharam!" : "Empate";
-            }
+            this.changeMessage(w);
         } catch (ex) {
             message.textContent = ex.message;
         }
     }
-    init() {
+    changeMessage(m) {
+        let objs = { DRAW: "Draw!", PLAYER2: "Red's win!", PLAYER1: "Blue's win!" };
+        if (objs[m]) {
+            this.setMessage(`Game Over! ${objs[m]}`);
+        } else {
+            let msgs = { PLAYER1: "Blue's turn.", PLAYER2: "Red's turn." };
+            this.setMessage(msgs[this.game.getTurn()]);
+        }
+    }
+    setMessage(message) {
+        let msg = document.getElementById("message");
+        msg.textContent = message;
+    }
+    printBoard() {
         let tbody = document.querySelector("tbody");
+        tbody.innerHTML = "";
         for (let i = 0; i < this.game.getRows(); i++) {
             let tr = document.createElement("tr");
             tbody.appendChild(tr);
@@ -34,6 +45,16 @@ class GUI {
                 tr.appendChild(td);
             }
         }
+    }
+    init() {
+        let iSize = document.getElementById("size");
+        let iStart = document.getElementById("start");
+        iSize.onchange = this.init.bind(this);
+        iStart.onclick = this.init.bind(this);
+        let size = iSize.valueAsNumber;
+        this.game = new FourMation(size, size);
+        this.printBoard();
+        this.changeMessage();
     }
 }
 let gui = new GUI();
