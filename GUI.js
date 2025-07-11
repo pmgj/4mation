@@ -21,26 +21,11 @@ class GUI {
         }
     }
     showPossibleMoves() {
-        let cell = this.game.getLastCell();
+        let moves = this.game.possibleMoves();
         let tbody = document.querySelector("tbody");
-        if (cell) {
-            let { x, y } = cell;
-            let cells = [new Cell(x - 1, y - 1), new Cell(x - 1, y), new Cell(x - 1, y + 1), new Cell(x, y - 1), new Cell(x, y + 1), new Cell(x + 1, y - 1), new Cell(x + 1, y), new Cell(x + 1, y + 1)];
-            cells.forEach(c => {
-                let { x: i, y: j } = c;
-                let td = tbody.rows[i].cells[j];
-                if (!td.classList.contains("PLAYER1") && !td.classList.contains("PLAYER2")) {
-                    td.classList.add("MOVE");
-                }
-            });
-        } else {
-            for (let i = 0; i < this.game.getRows(); i++) {
-                for (let j = 0; j < this.game.getCols(); j++) {
-                    let td = tbody.rows[i].cells[j];
-                    td.classList.add("MOVE");
-                }
-            }
-        }
+        moves.forEach(({x, y}) => {
+            tbody.rows[x].cells[y].classList.add("MOVE");
+        });
     }
     resetMoves() {
         let tbody = document.querySelector("tbody");

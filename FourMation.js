@@ -20,11 +20,8 @@ export default class FourMation {
     getCols() {
         return this.COLS;
     }
-    onBoard({x, y}) {
+    onBoard({ x, y }) {
         return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;
-    }
-    getLastCell() {
-        return this.lastCell;
     }
     play(cell) {
         let { x, y } = cell;
@@ -47,6 +44,29 @@ export default class FourMation {
         this.lastCell = cell;
         this.turn = this.turn === Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1;
         return this.endOfGame();
+    }
+    possibleMoves() {
+        let moves = [];
+        if (this.lastCell) {
+            let { x, y } = this.lastCell;
+            let cells = [new Cell(x - 1, y - 1), new Cell(x - 1, y), new Cell(x - 1, y + 1), new Cell(x, y - 1), new Cell(x, y + 1), new Cell(x + 1, y - 1), new Cell(x + 1, y), new Cell(x + 1, y + 1)];
+            cells.forEach(c => {
+                let { x: i, y: j } = c;
+                if (this.onBoard(c) && this.board[i][j] === CellState.EMPTY) {
+                    moves.push(c);
+                }
+            });
+        }
+        if (moves.length === 0) {
+            for (let i = 0; i < this.ROWS; i++) {
+                for (let j = 0; j < this.COLS; j++) {
+                    if (this.board[i][j] === CellState.EMPTY) {
+                        moves.push(new Cell(i, j));
+                    }
+                }
+            }
+        }
+        return moves;
     }
     endOfGame() {
         let checkH = player => {
@@ -73,7 +93,7 @@ export default class FourMation {
             return Winner.PLAYER1;
         } else if (checkH(CellState.PLAYER2) || checkV(CellState.PLAYER2)) {
             return Winner.PLAYER2;
-        } else if(this.board.flat().filter(c => c === CellState.EMPTY).length === 0) {
+        } else if (this.board.flat().filter(c => c === CellState.EMPTY).length === 0) {
             return Winner.DRAW;
         }
         return Winner.NONE;
