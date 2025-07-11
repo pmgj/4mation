@@ -34,3 +34,7 @@ input[type="number"] {
 .PLAYER2 {
     background-color: red;
 }
+
+.MOVE {
+    background-color: bisque;
+}

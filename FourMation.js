@@ -23,6 +23,9 @@ export default class FourMation {
     onBoard({x, y}) {
         return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;
     }
+    getLastCell() {
+        return this.lastCell;
+    }
     play(cell) {
         let { x, y } = cell;
         if (!this.onBoard(cell)) {

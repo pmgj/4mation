@@ -20,6 +20,37 @@ class GUI {
             message.textContent = ex.message;
         }
     }
+    showPossibleMoves() {
+        let cell = this.game.getLastCell();
+        let tbody = document.querySelector("tbody");
+        if (cell) {
+            let { x, y } = cell;
+            let cells = [new Cell(x - 1, y - 1), new Cell(x - 1, y), new Cell(x - 1, y + 1), new Cell(x, y - 1), new Cell(x, y + 1), new Cell(x + 1, y - 1), new Cell(x + 1, y), new Cell(x + 1, y + 1)];
+            cells.forEach(c => {
+                let { x: i, y: j } = c;
+                let td = tbody.rows[i].cells[j];
+                if (!td.classList.contains("PLAYER1") && !td.classList.contains("PLAYER2")) {
+                    td.classList.add("MOVE");
+                }
+            });
+        } else {
+            for (let i = 0; i < this.game.getRows(); i++) {
+                for (let j = 0; j < this.game.getCols(); j++) {
+                    let td = tbody.rows[i].cells[j];
+                    td.classList.add("MOVE");
+                }
+            }
+        }
+    }
+    resetMoves() {
+        let tbody = document.querySelector("tbody");
+        for (let i = 0; i < this.game.getRows(); i++) {
+            for (let j = 0; j < this.game.getCols(); j++) {
+                let td = tbody.rows[i].cells[j];
+                td.classList.remove("MOVE");
+            }
+        }
+    }
     changeMessage(m) {
         let objs = { DRAW: "Draw!", PLAYER2: "Red's win!", PLAYER1: "Blue's win!" };
         if (objs[m]) {
@@ -27,6 +58,8 @@ class GUI {
         } else {
             let msgs = { PLAYER1: "Blue's turn.", PLAYER2: "Red's turn." };
             this.setMessage(msgs[this.game.getTurn()]);
+            this.resetMoves();
+            this.showPossibleMoves();
         }
     }
     setMessage(message) {
