@@ -89,9 +89,29 @@ export default class FourMation {
             }
             return false;
         };
-        if (checkH(CellState.PLAYER1) || checkV(CellState.PLAYER1)) {
+        let checkD1 = player => {
+            for (let i = 0; i <= this.ROWS - 4; i++) {
+                for (let j = 0; j <= this.COLS - 4; j++) {
+                    if (this.board[i][j] === player && this.board[i + 1][j + 1] === player && this.board[i + 2][j + 2] === player && this.board[i + 3][j + 3] === player) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        let checkD2 = player => {
+            for (let i = 0; i <= this.ROWS - 4; i++) {
+                for (let j = 3; j < this.COLS; j++) {
+                    if (this.board[i][j] === player && this.board[i + 1][j - 1] === player && this.board[i + 2][j - 2] === player && this.board[i + 3][j - 3] === player) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        if (checkH(CellState.PLAYER1) || checkV(CellState.PLAYER1) || checkD1(CellState.PLAYER1) || checkD2(CellState.PLAYER1)) {
             return Winner.PLAYER1;
-        } else if (checkH(CellState.PLAYER2) || checkV(CellState.PLAYER2)) {
+        } else if (checkH(CellState.PLAYER2) || checkV(CellState.PLAYER2) || checkD1(CellState.PLAYER2) || checkD2(CellState.PLAYER2)) {
             return Winner.PLAYER2;
         } else if (this.board.flat().filter(c => c === CellState.EMPTY).length === 0) {
             return Winner.DRAW;
