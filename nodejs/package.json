@@ -1,0 +1,15 @@
+{
+  "name": "4mation",
+  "version": "1.0.0",
+  "description": "A board game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paulo Gonçalves",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "type": "module"
+}
