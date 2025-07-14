@@ -45,7 +45,16 @@ class GUI {
     }
     play(evt) {
         let begin = this.coordinates(evt.currentTarget);
+        console.log(JSON.stringify(begin));
         this.ws.send(JSON.stringify(begin));
+    }
+    clearBoard() {
+        let cells = document.querySelectorAll("td");
+        cells.forEach(td => {
+            td.innerHTML = "";
+            td.className = "";
+            td.onclick = undefined;
+        });
     }
     showPossibleMoves() {
         let moves = this.game.possibleMoves();
@@ -78,7 +87,7 @@ class GUI {
         let msg = document.getElementById("message");
         msg.textContent = message;
     }
-    printBoard() {
+    printBoard(matrix) {
         let tbody = document.querySelector("tbody");
         tbody.innerHTML = "";
         for (let i = 0; i < this.ROWS; i++) {
@@ -88,6 +97,14 @@ class GUI {
                 let td = document.createElement("td");
                 td.onclick = this.play.bind(this);
                 tr.appendChild(td);
+                if (matrix) {
+                    switch (matrix[i][j]) {
+                        case "PLAYER1":
+                        case "PLAYER2":
+                            td.className = matrix[i][j];
+                            break;
+                    }
+                }
             }
         }
     }
