@@ -4,7 +4,7 @@ import Cell from "./Cell.js";
 import Winner from "./Winner.js";
 
 export default class FourMation {
-    constructor(nrows = 4, ncols = 4) {
+    constructor(nrows = 7, ncols = 7) {
         this.ROWS = nrows;
         this.COLS = ncols;
         this.turn = Player.PLAYER1;
@@ -19,6 +19,9 @@ export default class FourMation {
     }
     getCols() {
         return this.COLS;
+    }
+    getBoard() {
+        return this.board;
     }
     onBoard({ x, y }) {
         return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;

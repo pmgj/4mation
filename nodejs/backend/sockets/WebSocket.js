@@ -1,22 +1,29 @@
 import { WebSocketServer } from 'ws';
-import FourMation from './FourMation';
+import FourMation from '../model/FourMation.js';
+import Message from './Message.js';
+import ConnectionType from './ConnectionType.js';
+import Player from '../model/Player.js';
 
 const wss = new WebSocketServer({ port: 8081 });
 console.log("Servidor ouvindo na porta 8081");
-let s1, s2, game = null;
+let s1 = null;
+let s2 = null;
+let game = null;
 wss.on('connection', ws => {
-    console.log(ws);
     // open
     if (s1 === null) {
         console.log("Armazenando jogador 1");
         s1 = ws;
-        // s1.send(new Message(ConnectionType.OPEN, Player.PLAYER1, null, null));
+        let msg = new Message(ConnectionType.OPEN, Player.PLAYER1, null, null);
+        s1.send(JSON.stringify(msg));
     } else if (s2 == null) {
         console.log("Armazenando jogador 2");
         game = new FourMation();
         s2 = ws;
-        // s2.send(new Message(ConnectionType.OPEN, Player.PLAYER2, null, null));
-        // sendMessage(new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null));
+        let msg = new Message(ConnectionType.OPEN, Player.PLAYER2, null, null)
+        s2.send(JSON.stringify(msg));
+        msg = new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null);
+        sendMessage(JSON.stringify(msg));
     } else {
         ws.close();
     }
@@ -32,3 +39,8 @@ wss.on('connection', ws => {
         console.error("Erro no WebSocket:", error);
     });
 });
+
+function sendMessage(msg) {
+    s1.send(msg);
+    s2.send(msg);
+}
