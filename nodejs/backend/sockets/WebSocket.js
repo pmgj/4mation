@@ -3,6 +3,7 @@ import FourMation from '../model/FourMation.js';
 import Message from './Message.js';
 import ConnectionType from './ConnectionType.js';
 import Player from '../model/Player.js';
+import Winner from '../model/Winner.js';
 
 const wss = new WebSocketServer({ port: 8081 });
 console.log("Servidor ouvindo na porta 8081");
@@ -29,7 +30,18 @@ wss.on('connection', ws => {
     }
 
     ws.on('message', message => {
-        console.log(message);
+        const beginCell = JSON.parse(message);
+        console.log('Received JSON message:', beginCell);
+        try {
+            let ret = game.play(ws === s1 ? Player.PLAYER1 : Player.PLAYER2, beginCell);
+            if (ret === Winner.NONE) {
+                sendMessage2(new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null));
+            } else {
+                sendMessage2(new Message(ConnectionType.ENDGAME, null, game.getBoard(), ret));
+            }
+        } catch (ex) {
+            console.log(ex.message);
+        }
     });
     // Evento quando o cliente fecha a conexão
     ws.on('close', () => {
@@ -43,4 +55,9 @@ wss.on('connection', ws => {
 function sendMessage(msg) {
     s1.send(msg);
     s2.send(msg);
+}
+function sendMessage2(msg) {
+    let json = JSON.stringify(msg);
+    s1.send(json);
+    s2.send(json);
 }

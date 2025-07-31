@@ -33,6 +33,14 @@ class GUI {
                 break;
         }
     }
+    clearBoard() {
+        let cells = document.querySelectorAll("td");
+        cells.forEach(td => {
+            td.innerHTML = "";
+            td.className = "";
+            td.onclick = undefined;
+        });
+    }
     endGame(type) {
         this.unsetEvents();
         this.ws = null;
@@ -78,7 +86,7 @@ class GUI {
         let msg = document.getElementById("message");
         msg.textContent = message;
     }
-    printBoard() {
+    printBoard(matrix) {
         let tbody = document.querySelector("tbody");
         tbody.innerHTML = "";
         for (let i = 0; i < this.ROWS; i++) {
@@ -86,7 +94,16 @@ class GUI {
             tbody.appendChild(tr);
             for (let j = 0; j < this.COLS; j++) {
                 let td = document.createElement("td");
+                td.className = "";
                 td.onclick = this.play.bind(this);
+                if (matrix) {
+                    switch (matrix[i][j]) {
+                        case "PLAYER1":
+                        case "PLAYER2":
+                            td.className = matrix[i][j];
+                            break;
+                    }
+                }
                 tr.appendChild(td);
             }
         }
