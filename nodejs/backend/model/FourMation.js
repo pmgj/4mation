@@ -26,11 +26,14 @@ export default class FourMation {
     onBoard({ x, y }) {
         return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;
     }
-    play(player, cell) {
+    play(player, player, cell) {
         if (player !== this.turn) {
             throw new Error("It's not your turn.");
         }
         let { x, y } = cell;
+        if (player != this.turn) {
+            throw new Error("It is not your turn.");
+        }
         if (!this.onBoard(cell)) {
             throw new Error("Cell does not exist.");
         }

@@ -53,7 +53,16 @@ class GUI {
     }
     play(evt) {
         let begin = this.coordinates(evt.currentTarget);
+        console.log(JSON.stringify(begin));
         this.ws.send(JSON.stringify(begin));
+    }
+    clearBoard() {
+        let cells = document.querySelectorAll("td");
+        cells.forEach(td => {
+            td.innerHTML = "";
+            td.className = "";
+            td.onclick = undefined;
+        });
     }
     showPossibleMoves() {
         let moves = this.game.possibleMoves();
@@ -105,6 +114,14 @@ class GUI {
                     }
                 }
                 tr.appendChild(td);
+                if (matrix) {
+                    switch (matrix[i][j]) {
+                        case "PLAYER1":
+                        case "PLAYER2":
+                            td.className = matrix[i][j];
+                            break;
+                    }
+                }
             }
         }
     }
