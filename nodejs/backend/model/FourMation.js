@@ -26,7 +26,7 @@ export default class FourMation {
     onBoard({ x, y }) {
         return x >= 0 && x < this.ROWS && y >= 0 && y < this.COLS;
     }
-    play(player, player, cell) {
+    play(player, cell) {
         if (player !== this.turn) {
             throw new Error("It's not your turn.");
         }

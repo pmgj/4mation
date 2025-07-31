@@ -15,12 +15,12 @@ wss.on('connection', ws => {
     if (s1 === null) {
         console.log("Armazenando jogador 1");
         s1 = ws;
-        s1.send(convert(new Message(ConnectionType.OPEN, Player.PLAYER1, null, null)));
+        send(s1, new Message(ConnectionType.OPEN, Player.PLAYER1, null, null));
     } else if (s2 == null) {
         console.log("Armazenando jogador 2");
         game = new FourMation();
         s2 = ws;
-        s2.send(convert(new Message(ConnectionType.OPEN, Player.PLAYER2, null, null)));
+        send(s2, new Message(ConnectionType.OPEN, Player.PLAYER2, null, null));
         sendMessage(new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null));
     } else {
         ws.close();
@@ -28,13 +28,12 @@ wss.on('connection', ws => {
 
     ws.on('message', message => {
         const beginCell = JSON.parse(message);
-        console.log('Received JSON message:', beginCell);
         try {
             let ret = game.play(ws === s1 ? Player.PLAYER1 : Player.PLAYER2, beginCell);
             if (ret === Winner.NONE) {
-                sendMessage2(new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null));
+                sendMessage(new Message(ConnectionType.MESSAGE, game.getTurn(), game.getBoard(), null));
             } else {
-                sendMessage2(new Message(ConnectionType.ENDGAME, null, game.getBoard(), ret));
+                sendMessage(new Message(ConnectionType.ENDGAME, null, game.getBoard(), ret));
             }
         } catch (ex) {
             console.log(ex.message);
@@ -54,10 +53,10 @@ wss.on('connection', ws => {
             case 1001:
             case 4001:
                 if (ws === s1) {
-                    s2.send(convert(new Message(ConnectionType.ENDGAME, null, game.getBoard(), Winner.PLAYER2)));
+                    send(s2, new Message(ConnectionType.ENDGAME, null, game.getBoard(), Winner.PLAYER2));
                     s1 = null;
                 } else {
-                    s1.send(convert(new Message(ConnectionType.ENDGAME, null, game.getBoard(), Winner.PLAYER1)));
+                    send(s1, new Message(ConnectionType.ENDGAME, null, game.getBoard(), Winner.PLAYER1));
                     s2 = null;
                 }
                 break;
@@ -75,11 +74,11 @@ function convert(message) {
 }
 
 function sendMessage(msg) {
-    s1.send(convert(msg));
-    s2.send(convert(msg));
-}
-function sendMessage2(msg) {
-    let json = JSON.stringify(msg);
+    let json = convert(msg);
     s1.send(json);
     s2.send(json);
+}
+
+function send(session, msg) {
+    session.send(convert(msg));
 }
