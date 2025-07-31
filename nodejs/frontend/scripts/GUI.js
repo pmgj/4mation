@@ -53,7 +53,6 @@ class GUI {
     }
     play(evt) {
         let begin = this.coordinates(evt.currentTarget);
-        console.log(JSON.stringify(begin));
         this.ws.send(JSON.stringify(begin));
     }
     clearBoard() {
@@ -114,14 +113,6 @@ class GUI {
                     }
                 }
                 tr.appendChild(td);
-                if (matrix) {
-                    switch (matrix[i][j]) {
-                        case "PLAYER1":
-                        case "PLAYER2":
-                            td.className = matrix[i][j];
-                            break;
-                    }
-                }
             }
         }
     }
